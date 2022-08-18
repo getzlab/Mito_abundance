@@ -1,11 +1,17 @@
+
+
+version 1.0
+
 task get_bam_idxstats {
 
-    File bam_file
-    File bai_file
-    String sample_id
-    File coverage_script 
-    Int memory_gb
-    Int disk_size
+    input {
+        File bam_file
+        File bai_file
+        String sample_id
+        File coverage_script 
+        Int memory_gb
+        Int disk_size
+    }
 
     command {
         set -euo pipefail
@@ -39,5 +45,34 @@ task get_bam_idxstats {
 }
 
 workflow get_bam_idxstats_workflow {
-    call get_bam_idxstats
+
+    input {
+        File bam_file
+        File bai_file
+        String sample_id
+        File coverage_script 
+        Int memory_gb
+        Int disk_size
+    }
+
+
+    call get_bam_idxstats {
+        input:
+            bam_file = bam_file,
+            bai_file = bai_file,
+            sample_id = sample_id,
+            coverage_script = coverage_script,
+            memory_gb = memory_gb,
+            disk_size = disk_size,
+    }   
+
+
+    output {
+        File mito_percent = get_bam_idxstats.mito_percent
+        Float mean_haploid_depth = get_bam_idxstats.mito_percent
+        Float mean_corrected_auto_depth = get_bam_idxstats.mean_corrected_auto_depth
+        Float mito_ratio = get_bam_idxstats.mito_ratio
+        File ref_seq_read_mapping = get_bam_idxstats.ref_seq_read_mapping
+    }
+    
 }
