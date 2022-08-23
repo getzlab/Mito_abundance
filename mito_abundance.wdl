@@ -9,19 +9,21 @@ task get_bam_idxstats {
         File bai_file
         String sample_id
         File coverage_script 
-        Int memory_gb
-        Int disk_size
+
+        # "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
+        String docker_image = "mholton/mito_abundance:1" 
+        Int ploidy = this.PureCN_ploidy
+        Int memory_gb = 4
+        Int disk_size = 50
+        
     }
 
     command {
         set -euo pipefail
-        echo $(date +"[%b %d %H:%M:%S] samtools: getting coverage over chrM")
-        cp ${bai_file} .
-       
+               
         samtools coverage ${bam_file} > ${sample_id}_read_statistics_noH.tsv
-        python3 ${coverage_script} --coverage ${sample_id}_read_statistics_noH.tsv --purity #### 
+        python3 ${coverage_script} --coverage ${sample_id}_read_statistics_noH.tsv --ploidy ploidy
 
-        echo $(date +"[%b %d %H:%M:%S] done.")
     }
 
     output {
@@ -33,7 +35,7 @@ task get_bam_idxstats {
     }
 
     runtime {
-    	docker: "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
+    	docker: docker_image
         memory: memory_gb + "GB"
         disks: "local-disk " + disk_size + " HDD"
     }
