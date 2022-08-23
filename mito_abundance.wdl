@@ -2,17 +2,23 @@
 
 version 1.0
 
-task get_bam_idxstats {
+task get_mito_abundance {
 
     input {
-        File bam_file
-        File bai_file
-        String sample_id
-        File coverage_script 
+        #File bam_file
+        #File bai_file
 
+        String bam_file_path
+        String gcloud_access_token 
+
+        File coverage_script 
         # "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
         String docker_image = "mholton/mito_abundance:1" 
-        Int ploidy = this.PureCN_ploidy
+
+        Int ploidy #= this.PureCN_ploidy
+
+        String sample_id
+
         Int memory_gb = 4
         Int disk_size = 50
         
@@ -20,8 +26,11 @@ task get_bam_idxstats {
 
     command {
         set -euo pipefail
-               
-        samtools coverage ${bam_file} > ${sample_id}_read_statistics_noH.tsv
+
+        # export GCS_OAUTH_TOKEN=`gcloud auth application-default print-access-token` && samtools view gs://*.bam
+        export GCS_OAUTH_TOKEN= ${gcloud_access_token} && samtools coverage gs://${bam_file_path} > ${sample_id}_read_statistics_noH.tsv 
+        # samtools coverage ${bam_file_path} > ${sample_id}_read_statistics_noH.tsv
+
         python3 ${coverage_script} --coverage ${sample_id}_read_statistics_noH.tsv --ploidy ploidy
 
     }
@@ -46,35 +55,37 @@ task get_bam_idxstats {
     }
 }
 
-workflow get_bam_idxstats_workflow {
+workflow mito_abundance_workflow {
 
     input {
-        File bam_file
-        File bai_file
+        String bam_file_path
+        String gcloud_access_token 
         String sample_id
         File coverage_script 
+        Int ploidy 
         Int memory_gb
         Int disk_size
     }
 
 
-    call get_bam_idxstats {
+    call get_mito_abundance {
         input:
-            bam_file = bam_file,
-            bai_file = bai_file,
+            bam_file_path = bam_file_path,
             sample_id = sample_id,
+            gcloud_access_token = gcloud_access_token,
             coverage_script = coverage_script,
+            ploidy = ploidy,
             memory_gb = memory_gb,
             disk_size = disk_size,
     }   
 
 
     output {
-        File mito_percent = get_bam_idxstats.mito_percent
-        Float mean_haploid_depth = get_bam_idxstats.mito_percent
-        Float mean_corrected_auto_depth = get_bam_idxstats.mean_corrected_auto_depth
-        Float mito_ratio = get_bam_idxstats.mito_ratio
-        File ref_seq_read_mapping = get_bam_idxstats.ref_seq_read_mapping
+        File mito_percent = get_mito_abundance.mito_percent
+        Float mean_haploid_depth = get_mito_abundance.mean_haploid_depth
+        Float mean_corrected_auto_depth = get_mito_abundance.mean_corrected_auto_depth
+        Float mito_ratio = get_mito_abundance.mito_ratio
+        File ref_seq_read_mapping = get_mito_abundance.ref_seq_read_mapping
     }
     
 }
