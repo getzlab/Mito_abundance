@@ -1,37 +1,31 @@
-
-
 version 1.0
 
 task get_mito_abundance {
 
     input {
-        #File bam_file
-        #File bai_file
-
-        String bam_file_path
-        String gcloud_access_token 
-
-        File coverage_script 
-        # "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
-        String docker_image = "mholton/mito_abundance:1" 
-
-        Int ploidy #= this.PureCN_ploidy
-
         String sample_id
-
+        String bam_file_path
+        String my_project_name 
+        File coverage_script         
+        Int ploidy 
+        String docker_image = "gcr.io/broad-getzlab-workflows/mito_abundance:1" 
         Int memory_gb = 4
         Int disk_size = 50
         
     }
 
     command {
+        echo Start
+        
         set -euo pipefail
-
-        # export GCS_OAUTH_TOKEN=`gcloud auth application-default print-access-token` && samtools view gs://*.bam
-        export GCS_OAUTH_TOKEN= ${gcloud_access_token} && samtools coverage gs://${bam_file_path} > ${sample_id}_read_statistics_noH.tsv 
-        # samtools coverage ${bam_file_path} > ${sample_id}_read_statistics_noH.tsv
-
-        python3 ${coverage_script} --coverage ${sample_id}_read_statistics_noH.tsv --ploidy ploidy
+        
+		echo HelloWorld
+        
+        export GCS_OAUTH_TOKEN=`gcloud auth application-default print-access-token`  && export GCS_REQUESTER_PAYS_PROJECT=${my_project_name} && samtools coverage ${bam_file_path} > ${sample_id}_read_statistics_noH.tsv 
+        
+        echo python
+        
+        python3 ${coverage_script} --coverage ${sample_id}_read_statistics_noH.tsv --ploidy ${ploidy}
 
     }
 
@@ -59,12 +53,12 @@ workflow mito_abundance_workflow {
 
     input {
         String bam_file_path
-        String gcloud_access_token 
+        String my_project_name 
         String sample_id
         File coverage_script 
         Int ploidy 
-        Int memory_gb
-        Int disk_size
+        Int memory_gb = 4
+        Int disk_size = 50
     }
 
 
@@ -72,7 +66,7 @@ workflow mito_abundance_workflow {
         input:
             bam_file_path = bam_file_path,
             sample_id = sample_id,
-            gcloud_access_token = gcloud_access_token,
+            my_project_name = my_project_name,
             coverage_script = coverage_script,
             ploidy = ploidy,
             memory_gb = memory_gb,
