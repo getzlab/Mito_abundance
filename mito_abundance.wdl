@@ -8,33 +8,27 @@ task get_mito_abundance {
         String my_project_name 
         File coverage_script         
         Int ploidy 
-        String docker_image = "gcr.io/broad-getzlab-workflows/mito_abundance:1" 
+        String docker_image = "gcr.io/broad-getzlab-workflows/mito_abundance:2" 
         Int memory_gb = 4
         Int disk_size = 50
         
     }
 
     command {
-        echo Start
-        
         set -euo pipefail
         
-		echo HelloWorld
-        
-        export GCS_OAUTH_TOKEN=`gcloud auth application-default print-access-token`  && export GCS_REQUESTER_PAYS_PROJECT=${my_project_name} && samtools coverage ${bam_file_path} > ${sample_id}_read_statistics_noH.tsv 
-        
-        echo python
-        
-        python3 ${coverage_script} --coverage ${sample_id}_read_statistics_noH.tsv --ploidy ${ploidy}
+        export GCS_OAUTH_TOKEN=`gcloud auth application-default print-access-token`  && export GCS_REQUESTER_PAYS_PROJECT=${my_project_name} && samtools coverage ${bam_file_path} > ${sample_id}_coverage_statistics.tsv 
+                
+        python3 ${coverage_script} --coverage ${sample_id}_coverage_statistics.tsv --ploidy ${ploidy}
 
     }
 
     output {
-        File mito_percent = sample_id + "_mito_statistics.idxstats"
         Float mean_haploid_depth = read_float("mean_haploid_depth.txt")
         Float mean_corrected_auto_depth = read_float("mean_corrected_auto_depth.txt")
         Float mito_ratio = read_float("mito_ratio.txt")
-        File ref_seq_read_mapping = sample_id + "_read_statistics.idxstats"
+        Float mean_mito_depth = read_float("mean_mito_depth.txt")
+        File coverage_file = sample_id + "_coverage_statistics.tsv"
     }
 
     runtime {
@@ -75,11 +69,12 @@ workflow mito_abundance_workflow {
 
 
     output {
-        File mito_percent = get_mito_abundance.mito_percent
         Float mean_haploid_depth = get_mito_abundance.mean_haploid_depth
         Float mean_corrected_auto_depth = get_mito_abundance.mean_corrected_auto_depth
         Float mito_ratio = get_mito_abundance.mito_ratio
-        File ref_seq_read_mapping = get_mito_abundance.ref_seq_read_mapping
+        Float mean_mito_depth = get_mito_abundance.mean_mito_depth
+        File coverage_file = get_mito_abundance.coverage_file
+
     }
     
 }
