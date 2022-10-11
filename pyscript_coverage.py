@@ -29,8 +29,10 @@ for i in range(1,23):
 
 if "chrM" in coverage_data.index:    
     mean_mito_depth = coverage_data.loc["chrM", "meandepth"]
+    total_mito_reads = coverage_data.loc["chrM", "meandepth"] * (coverage_data.loc["chrM", "endpos"] - coverage_data.loc["chrM", "startpos"]) 
 else:
     mean_mito_depth = 0
+    total_mito_reads = 0
 mean_haploid_depth = autosome_total_depth / autosome_size
 mean_corrected_auto_depth = mean_haploid_depth / ploidy
 mito_ratio = mean_mito_depth / mean_corrected_auto_depth
@@ -57,5 +59,12 @@ output_file4 = "mean_mito_depth.txt"
 with open(output_file4, 'w') as fh:
     fh.write("%s"%(mean_mito_depth))
 
-
+# new outputs
+output_file1 = "autosome_total_depth.txt"
+with open(output_file1, 'w') as fh:
+    fh.write("%s"%(autosome_total_depth))
     
+output_file1 = "total_mito_reads.txt"
+with open(output_file1, 'w') as fh:
+    fh.write("%s"%(total_mito_reads))
+
