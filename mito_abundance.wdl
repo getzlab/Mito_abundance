@@ -6,7 +6,7 @@ task get_mito_abundance {
         String sample_id
         String bam_file_path
         String my_project_name 
-        File coverage_script         
+        #File coverage_script         
         Float ploidy 
         String docker_image = "gcr.io/broad-getzlab-workflows/mito_abundance:2" 
         Int memory_gb = 2
@@ -18,11 +18,11 @@ task get_mito_abundance {
             
     command {
         set -euo pipefail
-        
+        git clone https://github.com/getzlab/Mito_abundance.git
+
         export GCS_OAUTH_TOKEN=`gcloud auth application-default print-access-token`  && export GCS_REQUESTER_PAYS_PROJECT=${my_project_name} && samtools coverage ${bam_file_path} --input-fmt-option nthreads=${num_threads} > ${sample_id}_coverage_statistics.tsv 
-        
                 
-        python3 ${coverage_script} --coverage ${sample_id}_coverage_statistics.tsv --ploidy ${ploidy}
+        python3 Mito_abundance/pyscript_coverage.py --coverage ${sample_id}_coverage_statistics.tsv --ploidy ${ploidy}
 
     }
 
@@ -53,7 +53,7 @@ workflow mito_abundance_workflow {
         String bam_file_path
         String my_project_name 
         String sample_id
-        File coverage_script 
+        #File coverage_script 
         Float ploidy 
         Int memory_gb = 2
         Int disk_size = 10
@@ -66,7 +66,7 @@ workflow mito_abundance_workflow {
             bam_file_path = bam_file_path,
             sample_id = sample_id,
             my_project_name = my_project_name,
-            coverage_script = coverage_script,
+            #coverage_script = coverage_script,
             ploidy = ploidy,
             memory_gb = memory_gb,
             disk_size = disk_size,

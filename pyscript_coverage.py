@@ -27,7 +27,10 @@ for i in range(1,23):
         autosome_total_depth = autosome_total_depth + coverage_data.loc[chrom,  "meandepth"] * chrom_size
         autosome_size = autosome_size + chrom_size
 
-mean_mito_depth = coverage_data.loc["chrM", "meandepth"]
+if "chrM" in coverage_data.index:    
+    mean_mito_depth = coverage_data.loc["chrM", "meandepth"]
+else:
+    mean_mito_depth = 0
 mean_haploid_depth = autosome_total_depth / autosome_size
 mean_corrected_auto_depth = mean_haploid_depth / ploidy
 mito_ratio = mean_mito_depth / mean_corrected_auto_depth
