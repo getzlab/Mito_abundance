@@ -5,7 +5,8 @@ task get_mito_abundance {
     input {
         String sample_id
         String bam_file_path
-        String my_project_name 
+        String my_project_name
+
         #File coverage_script         
         Float ploidy 
         String docker_image = "gcr.io/broad-getzlab-workflows/mito_abundance:2" 
@@ -58,7 +59,7 @@ workflow mito_abundance_workflow {
         #File coverage_script 
         Float ploidy 
         Int memory_gb = 2
-        Int disk_size = 10
+        Int disk_size = 1
         Int num_threads = 2
     }
 

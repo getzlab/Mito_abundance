@@ -1,8 +1,9 @@
 FROM python:3.9-slim-buster
+# one being used
 
 ENV DEBIAN_FRONTEND="noninteractive" TZ="America/New_York"
 
-# Installing apt packages
+# Installing apt packages 
 #RUN apt-get update && apt-get -y upgrade && apt-get install -y build-essential curl git libbz2-dev libcurl3-dev liblzma-dev libgsl-dev  libncurses5-dev wget zip && apt-get clean && apt-get purge && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y build-essential curl git libncurses5-dev libbz2-dev liblzma-dev libcurl3-dev libssl-dev
