@@ -13,10 +13,10 @@ file_name = args.coverage[0]
 ploidy = args.ploidy[0]
 
 coverage_data = pd.read_csv(file_name, sep='\t')
-coverage_data.set_index(coverage_data.columns[0], inplace=True)
-
-print(coverage_data.head())
 print(coverage_data.columns[0])
+coverage_data.set_index(coverage_data.columns[0], inplace=True)
+print(coverage_data.head())
+
 
 
 autosome_total_depth = 0
