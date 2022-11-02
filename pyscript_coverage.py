@@ -25,21 +25,29 @@ for i in range(1,23):
     
     chrom = "chr%s"%(i) 
     print("chrom = %s"%(chrom))
+
+    #print(str(i) in coverage_data.index)
+
+
     if chrom in coverage_data.index:
         chrom_size = coverage_data.loc[chrom, "endpos"] - coverage_data.loc[chrom, "startpos"]
         autosome_size = autosome_size + chrom_size
 
         autosome_total_depth = autosome_total_depth + coverage_data.loc[chrom,  "meandepth"] * chrom_size
-    elif i in coverage_data.index:
-        chrom_size = coverage_data.loc[chrom, "endpos"] - coverage_data.loc[chrom, "startpos"]
+    elif str(i) in coverage_data.index:
+        chrom_size = coverage_data.loc[str(i), "endpos"] - coverage_data.loc[str(i), "startpos"]
         autosome_size = autosome_size + chrom_size
 
-        autosome_total_depth = autosome_total_depth + coverage_data.loc[chrom,  "meandepth"] * chrom_size 
+        autosome_total_depth = autosome_total_depth + coverage_data.loc[str(i),  "meandepth"] * chrom_size 
 
 if "chrM" in coverage_data.index:    
     mean_mito_depth = coverage_data.loc["chrM", "meandepth"]
     total_mito_reads = coverage_data.loc["chrM", "meandepth"] * (coverage_data.loc["chrM", "endpos"] - coverage_data.loc["chrM", "startpos"]) 
+elif "MT" in coverage_data.index:    
+    mean_mito_depth = coverage_data.loc["MT", "meandepth"]
+    total_mito_reads = coverage_data.loc["MT", "meandepth"] * (coverage_data.loc["MT", "endpos"] - coverage_data.loc["MT", "startpos"]) 
 else:
+    print("Can't find Mitochondria Gene row of coverage file.")
     mean_mito_depth = 0
     total_mito_reads = 0
 
