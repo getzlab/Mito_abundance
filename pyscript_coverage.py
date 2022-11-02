@@ -28,9 +28,13 @@ for i in range(1,23):
     if chrom in coverage_data.index:
         chrom_size = coverage_data.loc[chrom, "endpos"] - coverage_data.loc[chrom, "startpos"]
         autosome_size = autosome_size + chrom_size
-        
+
         autosome_total_depth = autosome_total_depth + coverage_data.loc[chrom,  "meandepth"] * chrom_size
-        
+    elif i in coverage_data.index:
+        chrom_size = coverage_data.loc[chrom, "endpos"] - coverage_data.loc[chrom, "startpos"]
+        autosome_size = autosome_size + chrom_size
+
+        autosome_total_depth = autosome_total_depth + coverage_data.loc[chrom,  "meandepth"] * chrom_size 
 
 if "chrM" in coverage_data.index:    
     mean_mito_depth = coverage_data.loc["chrM", "meandepth"]
