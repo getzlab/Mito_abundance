@@ -28,13 +28,17 @@ task get_mito_abundance {
     }
 
     output {
+        File coverage_file = sample_id + "_coverage_statistics.tsv"
+        Float mito_ratio = read_float("mito_ratio.txt")
+                
+        Float mean_mito_depth = read_float("mean_mito_depth.txt")
+        Float total_mito_reads = read_float("total_mito_reads.txt")
         Float mean_haploid_depth = read_float("mean_haploid_depth.txt")
         Float mean_corrected_auto_depth = read_float("mean_corrected_auto_depth.txt")
-        Float mito_ratio = read_float("mito_ratio.txt")
-        Float mean_mito_depth = read_float("mean_mito_depth.txt")
+
         Float autosome_total_depth = read_float("autosome_total_depth.txt")
-        Float total_mito_reads = read_float("total_mito_reads.txt")
-        File coverage_file = sample_id + "_coverage_statistics.tsv"
+        Float autosome_total_reads = read_float("autosome_total_reads.txt")
+        
     }
 
     runtime {
@@ -85,6 +89,7 @@ workflow mito_abundance_workflow {
         Float autosome_total_depth = get_mito_abundance.autosome_total_depth
         Float total_mito_reads = get_mito_abundance.total_mito_reads
         File coverage_file = get_mito_abundance.coverage_file
+        Float autosome_total_reads = get_mito_abundance.autosome_total_reads
 
     }
     
