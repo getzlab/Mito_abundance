@@ -53,7 +53,7 @@ for i in range(1,23):
         chrom_size = coverage_data.loc[str(i), "endpos"] - coverage_data.loc[str(i), "startpos"]
         autosome_size = autosome_size + chrom_size
         autosome_total_depth = autosome_total_depth + coverage_data.loc[str(i),  "meandepth"] * chrom_size 
-        autosome_total_reads = autosome_total_reads + coverage_data.loc[chrom,  "numreads"] 
+        autosome_total_reads = autosome_total_reads + coverage_data.loc[str(i),  "numreads"] 
 
 
 
