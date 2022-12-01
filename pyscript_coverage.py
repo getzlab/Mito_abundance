@@ -20,21 +20,17 @@ print(coverage_data.head())
 if "chrM" in coverage_data.index:    
     mean_mito_depth = coverage_data.loc["chrM", "meandepth"]
     mito_size = (coverage_data.loc["chrM", "endpos"] - coverage_data.loc["chrM", "startpos"])
-    # add warning if mito_size less than 10 thousand
-
-    #total_mito_depth = coverage_data.loc["chrM", "meandepth"] * mito_size 
     total_mito_reads = coverage_data.loc["chrM", "numreads"] 
-    #mean_mito_reads = coverage_data.loc["chrM", "numreads"] / mito_size
+    # add warning if mito_size less than 10 thousand
+    #total_mito_depth = coverage_data.loc["chrM", "meandepth"] * mito_size 
 elif "MT" in coverage_data.index:    
     mean_mito_depth = coverage_data.loc["MT", "meandepth"]
     mito_size = (coverage_data.loc["MT", "endpos"] - coverage_data.loc["MT", "startpos"]) 
-    #total_mito_depth = coverage_data.loc["MT", "meandepth"] * mito_size 
     total_mito_reads = coverage_data.loc["MT", "numreads"] / mito_size
 else:
     print("Can't find Mitochondria Gene row of coverage file.")
     mean_mito_depth = 0
     mito_size = 0
-    #total_mito_depth = 0
     total_mito_reads = 0
 
 autosome_total_depth = 0
